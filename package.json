@@ -1,0 +1,14 @@
+{
+  "name": "snake",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/maxrchung/snake.git",
+  "author": "maxrchung <maxrchung@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "tsc": "tsc"
+  }
+}
