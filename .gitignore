@@ -1,3 +1,7 @@
+# Ignore compiled Typescript files
+src/**/*.js.map
+src/**/*.js
+
 # Logs
 logs
 *.log
