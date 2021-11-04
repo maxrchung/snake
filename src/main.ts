@@ -1,3 +1,5 @@
+// TODO: EDGE CASES MAX ROWS
+
 const width = 800;
 const lightGray = 'rgb(200, 200, 200)';
 const rows = 40;
@@ -8,9 +10,34 @@ canvas.width = width;
 canvas.height = width;
 const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-const update = (timeDelta: number) => {
+const head = [40, 40];
+let direction = [0, 0];
+let previousMoveTime = 0;
+const moveTime = 100;
+let previousTime = 0;
 
+const handleKey = (e: KeyboardEvent) => {
+    switch(e.code) {
+        case "ArrowUp":
+        case "KeyW":
+            direction = [0, -1];
+            break;
+        case "ArrowLeft":
+        case "KeyA":
+            direction = [-1, 0];
+            break;
+        case "ArrowDown":
+        case "KeyS":
+            direction = [0, 1];
+            break;
+        case "ArrowRight":
+        case "KeyD":
+            direction = [1, 0];
+            break;
+    }
 }
+
+document.addEventListener("keydown", handleKey);
 
 const drawGrid = () => {
     context.beginPath();
@@ -25,11 +52,35 @@ const drawGrid = () => {
     context.stroke();
 }
 
-let previousTime = 0;
+const updateHead = (time: number) => {
+    if (time - previousMoveTime > moveTime) {
+        head[0] += direction[0];
+        head[1] += direction[1];
+
+        if (head[0] >= rows) {
+            head[0] = 0;
+        } else if (head[0] < 0) {
+            head[0] = rows - 1;
+        }
+
+        if (head[1] >= rows) {
+            head[1] = 0;
+        } else if (head[1] < 0) {
+            head[1] = rows - 1;
+        }
+        previousMoveTime = time;
+    }
+}
+
+const drawHead = () => {
+    context.fillRect(head[0] * rowWidth, head[1] * rowWidth, rowWidth, rowWidth);
+}
+
 const gameLoop = (time: DOMHighResTimeStamp) => {
-    const timeDelta = time - previousTime;
-    update(timeDelta);
+    context.clearRect(0, 0, width, width);
+    updateHead(time);
     drawGrid();
+    drawHead();
     previousTime = time;
     window.requestAnimationFrame(gameLoop);
 }
