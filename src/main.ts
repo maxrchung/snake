@@ -11,6 +11,7 @@ canvas.height = width;
 const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
 const head = [40, 40];
+let food = [20, 20];
 let direction = [0, 0];
 let previousMoveTime = 0;
 const moveTime = 100;
@@ -53,27 +54,37 @@ const drawGrid = () => {
 }
 
 const updateHead = (time: number) => {
-    if (time - previousMoveTime > moveTime) {
-        head[0] += direction[0];
-        head[1] += direction[1];
-
-        if (head[0] >= rows) {
-            head[0] = 0;
-        } else if (head[0] < 0) {
-            head[0] = rows - 1;
-        }
-
-        if (head[1] >= rows) {
-            head[1] = 0;
-        } else if (head[1] < 0) {
-            head[1] = rows - 1;
-        }
-        previousMoveTime = time;
+    if (time - previousMoveTime <= moveTime) {
+        return;
     }
+    head[0] += direction[0];
+    head[1] += direction[1];
+
+    if (head[0] >= rows) {
+        head[0] = 0;
+    } else if (head[0] < 0) {
+        head[0] = rows - 1;
+    }
+
+    if (head[1] >= rows) {
+        head[1] = 0;
+    } else if (head[1] < 0) {
+        head[1] = rows - 1;
+    }
+    previousMoveTime = time;
 }
 
 const drawHead = () => {
     context.fillRect(head[0] * rowWidth, head[1] * rowWidth, rowWidth, rowWidth);
+}
+
+const drawFood = () => {
+    context.fillRect(
+        food[0] * rowWidth + rowWidth * 0.25,
+        food[1] * rowWidth + rowWidth * 0.25,
+        rowWidth * 0.5,
+        rowWidth * 0.5
+    );
 }
 
 const gameLoop = (time: DOMHighResTimeStamp) => {
@@ -81,6 +92,7 @@ const gameLoop = (time: DOMHighResTimeStamp) => {
     updateHead(time);
     drawGrid();
     drawHead();
+    drawFood();
     previousTime = time;
     window.requestAnimationFrame(gameLoop);
 }
