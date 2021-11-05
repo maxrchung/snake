@@ -10,7 +10,7 @@ canvas.width = width;
 canvas.height = width;
 const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-const head = [40, 40];
+const head = [39, 39];
 let food = [20, 20];
 let direction = [0, 0];
 let previousMoveTime = 0;
@@ -74,6 +74,19 @@ const updateHead = (time: number) => {
     previousMoveTime = time;
 }
 
+const getRandomCoordinate = () =>
+    [Math.floor(Math.random() * rows), Math.floor(Math.random() * rows)]
+
+const updateFood = () => {
+    if (head[0] === food[0] && head[1] === food[1]) {
+        let newFood = getRandomCoordinate();
+        while (newFood[0] === food[0] && newFood[1] === food[1]) {
+            newFood = getRandomCoordinate();
+        }
+        food = newFood;
+    }
+}
+
 const drawHead = () => {
     context.fillRect(head[0] * rowWidth, head[1] * rowWidth, rowWidth, rowWidth);
 }
@@ -90,6 +103,7 @@ const drawFood = () => {
 const gameLoop = (time: DOMHighResTimeStamp) => {
     context.clearRect(0, 0, width, width);
     updateHead(time);
+    updateFood();
     drawGrid();
     drawHead();
     drawFood();
