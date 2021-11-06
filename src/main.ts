@@ -16,7 +16,6 @@ let food = [20, 20];
 let direction = [0, 0];
 let previousMoveTime = 0;
 const moveTime = 100;
-let previousTime = 0;
 
 document.addEventListener("keydown", (e: KeyboardEvent) => {
   switch (e.code) {
@@ -140,7 +139,6 @@ const gameLoop = (time: DOMHighResTimeStamp) => {
   drawHead();
   drawBody();
   drawFood();
-  previousTime = time;
   window.requestAnimationFrame(gameLoop);
 };
 
