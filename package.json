@@ -6,6 +6,7 @@
   "author": "maxrchung <maxrchung@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "prettier": "^2.4.1",
     "typescript": "^4.4.4"
   },
   "scripts": {
