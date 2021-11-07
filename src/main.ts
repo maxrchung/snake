@@ -21,33 +21,33 @@ const reset = () => {
   head = [0, 0];
   body = [];
   shouldAddFood = false;
-  food = getFoodCoordinate();
+  food = getFoodPosition();
 };
 
-const getFoodCoordinate = () => {
-  let coordinate = getRandomCoordinate();
-  while (isExistingCoordinate(coordinate)) {
-    coordinate = getRandomCoordinate();
+const getFoodPosition = () => {
+  let position = getRandomPosition();
+  while (isExistingPosition(position)) {
+    position = getRandomPosition();
   }
-  return coordinate;
+  return position;
 };
 
-const getRandomCoordinate = () => [
+const getRandomPosition = () => [
   Math.floor(Math.random() * rows),
   Math.floor(Math.random() * rows),
 ];
 
-const isExistingCoordinate = (coordinate: number[]) => {
-  if (food && coordinate[0] === food[0] && coordinate[1] === food[1]) {
+const isExistingPosition = (position: number[]) => {
+  if (food && position[0] === food[0] && position[1] === food[1]) {
     return true;
   }
 
-  if (coordinate[0] === head[0] && coordinate[1] === head[1]) {
+  if (position[0] === head[0] && position[1] === head[1]) {
     return true;
   }
 
   for (const bodyPart of body) {
-    if (coordinate[0] === bodyPart[0] && coordinate[1] === bodyPart[1]) {
+    if (position[0] === bodyPart[0] && position[1] === bodyPart[1]) {
       return true;
     }
   }
@@ -122,7 +122,7 @@ const updateFood = () => {
     return;
   }
   shouldAddFood = true;
-  const newFood = getFoodCoordinate();
+  const newFood = getFoodPosition();
   food = newFood;
 };
 
