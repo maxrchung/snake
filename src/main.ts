@@ -1,42 +1,70 @@
-// TODO: EDGE CASES MAX ROWS
-
 const width = 800;
 const lightGray = "rgb(200, 200, 200)";
 const rows = 40;
 const rowWidth = width / rows;
+const moveTime = 100;
+let previousMoveTime = 0;
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.width = width;
 canvas.height = width;
 const context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-const head = [39, 39];
-const body: number[][] = [];
-let food = [20, 20];
-let direction = [0, 0];
-let previousMoveTime = 0;
-const moveTime = 100;
+let direction: number[];
+let head: number[];
+let body: number[][];
+let food: number[];
+let shouldAddFood: boolean;
 
-document.addEventListener("keydown", (e: KeyboardEvent) => {
-  switch (e.code) {
-    case "ArrowUp":
-    case "KeyW":
-      direction = [0, -1];
-      break;
-    case "ArrowLeft":
-    case "KeyA":
-      direction = [-1, 0];
-      break;
-    case "ArrowDown":
-    case "KeyS":
-      direction = [0, 1];
-      break;
-    case "ArrowRight":
-    case "KeyD":
-      direction = [1, 0];
-      break;
+const reset = () => {
+  direction = [0, 0];
+  head = [0, 0];
+  body = [];
+  shouldAddFood = false;
+  food = getFoodCoordinate();
+};
+
+const getFoodCoordinate = () => {
+  let coordinate = getRandomCoordinate();
+  while (isExistingCoordinate(coordinate)) {
+    coordinate = getRandomCoordinate();
   }
-});
+  return coordinate;
+};
+
+const getRandomCoordinate = () => [
+  Math.floor(Math.random() * rows),
+  Math.floor(Math.random() * rows),
+];
+
+const isExistingCoordinate = (coordinate: number[]) => {
+  if (food && coordinate[0] === food[0] && coordinate[1] === food[1]) {
+    return true;
+  }
+
+  if (coordinate[0] === head[0] && coordinate[1] === head[1]) {
+    return true;
+  }
+
+  for (const bodyPart of body) {
+    if (coordinate[0] === bodyPart[0] && coordinate[1] === bodyPart[1]) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const gameLoop = (time: DOMHighResTimeStamp) => {
+  context.clearRect(0, 0, width, width);
+  updateSnake(time);
+  updateFood();
+  drawGrid();
+  drawHead();
+  drawBody();
+  drawFood();
+  window.requestAnimationFrame(gameLoop);
+};
 
 const updateSnake = (time: number) => {
   if (time - previousMoveTime <= moveTime) {
@@ -49,6 +77,11 @@ const updateSnake = (time: number) => {
 };
 
 const updateBody = () => {
+  if (shouldAddFood) {
+    body.push([-1, -1]);
+    shouldAddFood = false;
+  }
+
   for (let i = body.length - 1; i >= 0; --i) {
     if (i === 0) {
       body[0][0] = head[0];
@@ -76,24 +109,22 @@ const updateHead = () => {
   } else if (head[1] < 0) {
     head[1] = rows - 1;
   }
+
+  for (const bodyPart of body) {
+    if (head[0] === bodyPart[0] && head[1] === bodyPart[1]) {
+      reset();
+    }
+  }
 };
 
 const updateFood = () => {
   if (head[0] !== food[0] || head[1] !== food[1]) {
     return;
   }
-  body.push([food[0], food[1]]);
-  let newFood = getRandomCoordinate();
-  while (newFood[0] === food[0] && newFood[1] === food[1]) {
-    newFood = getRandomCoordinate();
-  }
+  shouldAddFood = true;
+  const newFood = getFoodCoordinate();
   food = newFood;
 };
-
-const getRandomCoordinate = () => [
-  Math.floor(Math.random() * rows),
-  Math.floor(Math.random() * rows),
-];
 
 const drawGrid = () => {
   context.beginPath();
@@ -113,14 +144,6 @@ const drawGrid = () => {
 const drawHead = () =>
   context.fillRect(head[0] * rowWidth, head[1] * rowWidth, rowWidth, rowWidth);
 
-const drawFood = () =>
-  context.fillRect(
-    food[0] * rowWidth + rowWidth * 0.25,
-    food[1] * rowWidth + rowWidth * 0.25,
-    rowWidth * 0.5,
-    rowWidth * 0.5
-  );
-
 const drawBody = () =>
   body.map((food) =>
     context.strokeRect(
@@ -131,15 +154,35 @@ const drawBody = () =>
     )
   );
 
-const gameLoop = (time: DOMHighResTimeStamp) => {
-  context.clearRect(0, 0, width, width);
-  updateSnake(time);
-  updateFood();
-  drawGrid();
-  drawHead();
-  drawBody();
-  drawFood();
-  window.requestAnimationFrame(gameLoop);
-};
+const drawFood = () =>
+  context.fillRect(
+    food[0] * rowWidth + rowWidth * 0.25,
+    food[1] * rowWidth + rowWidth * 0.25,
+    rowWidth * 0.5,
+    rowWidth * 0.5
+  );
+
+reset();
+
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+  switch (e.code) {
+    case "ArrowUp":
+    case "KeyW":
+      direction = [0, -1];
+      break;
+    case "ArrowLeft":
+    case "KeyA":
+      direction = [-1, 0];
+      break;
+    case "ArrowDown":
+    case "KeyS":
+      direction = [0, 1];
+      break;
+    case "ArrowRight":
+    case "KeyD":
+      direction = [1, 0];
+      break;
+  }
+});
 
 window.requestAnimationFrame(gameLoop);
