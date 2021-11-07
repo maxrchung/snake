@@ -162,25 +162,36 @@ const drawFood = () =>
     rowWidth * 0.5
   );
 
+const setDirection = (x: number, y: number) => {
+  if (body.length !== 0) {
+    const nextPosition = [head[0] + x, head[1] + y];
+    if (nextPosition[0] === body[0][0] && nextPosition[1] === body[0][1]) {
+      return;
+    }
+  }
+
+  direction = [x, y];
+};
+
 reset();
 
 document.addEventListener("keydown", (e: KeyboardEvent) => {
   switch (e.code) {
     case "ArrowUp":
     case "KeyW":
-      direction = [0, -1];
+      setDirection(0, -1);
       break;
     case "ArrowLeft":
     case "KeyA":
-      direction = [-1, 0];
+      setDirection(-1, 0);
       break;
     case "ArrowDown":
     case "KeyS":
-      direction = [0, 1];
+      setDirection(0, 1);
       break;
     case "ArrowRight":
     case "KeyD":
-      direction = [1, 0];
+      setDirection(1, 0);
       break;
   }
 });
