@@ -5,10 +5,15 @@ const rowWidth = width / rows;
 const moveTime = 100;
 let previousMoveTime = 0;
 
+const text = "qwhello there test 123";
+const fontSize = 14;
+const font = `${fontSize}px sans-serif`;
+
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.width = width;
 canvas.height = width;
 const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+context.font = font;
 
 let direction: number[];
 let head: number[];
@@ -145,14 +150,23 @@ const drawHead = () =>
   context.fillRect(head[0] * rowWidth, head[1] * rowWidth, rowWidth, rowWidth);
 
 const drawBody = () =>
-  body.map((food) =>
+  body.map((food, index) => {
     context.strokeRect(
       food[0] * rowWidth,
       food[1] * rowWidth,
       rowWidth,
       rowWidth
-    )
-  );
+    );
+    if (index < text.length) {
+      const character = text[index];
+      const measure = context.measureText(character);
+      context.fillText(
+        character,
+        food[0] * rowWidth + rowWidth / 2 - measure.width / 2,
+        food[1] * rowWidth + rowWidth / 2 + fontSize / 2
+      );
+    }
+  });
 
 const drawFood = () =>
   context.fillRect(
