@@ -42,8 +42,8 @@ const getFoodPosition = () => {
 };
 
 const getRandomPosition = () => [
-  Math.floor(Math.random() * rows),
-  Math.floor(Math.random() * rows),
+  Math.floor(Math.random() * (rows - 1)),
+  Math.floor(Math.random() * (rows - 1)),
 ];
 
 const isExistingPosition = (position: number[]) => {
