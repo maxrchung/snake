@@ -1,3 +1,7 @@
+// TODO: Reverse snake
+// TODO: States
+// TODO: End game shake
+
 const width = 800;
 const lightGray = "rgb(200, 200, 200)";
 const rows = 40;
@@ -23,7 +27,7 @@ let shouldAddFood: boolean;
 
 const reset = () => {
   direction = [0, 0];
-  head = [0, 0];
+  head = [1, 1];
   body = [];
   shouldAddFood = false;
   food = getFoodPosition();
@@ -103,16 +107,8 @@ const updateHead = () => {
   head[0] += direction[0];
   head[1] += direction[1];
 
-  if (head[0] >= rows) {
-    head[0] = 0;
-  } else if (head[0] < 0) {
-    head[0] = rows - 1;
-  }
-
-  if (head[1] >= rows) {
-    head[1] = 0;
-  } else if (head[1] < 0) {
-    head[1] = rows - 1;
+  if (head[0] >= rows || head[0] < 0 || head[1] >= rows || head[1] < 0) {
+    reset();
   }
 
   for (const bodyPart of body) {
