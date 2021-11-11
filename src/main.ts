@@ -109,11 +109,13 @@ const updateHead = () => {
 
   if (head[0] >= rows || head[0] < 0 || head[1] >= rows || head[1] < 0) {
     reset();
+    return;
   }
 
   for (const bodyPart of body) {
     if (head[0] === bodyPart[0] && head[1] === bodyPart[1]) {
       reset();
+      return;
     }
   }
 };
