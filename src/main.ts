@@ -1,5 +1,6 @@
-// TODO: Reverse snake
+// TODO: Reduce body when eating food
 // TODO: States
+// TODO: Text
 // TODO: End game shake
 
 const width = 800;
@@ -9,7 +10,9 @@ const rowWidth = width / rows;
 const moveTime = 100;
 let previousMoveTime = 0;
 
-const text = "qwhello there test 123";
+let text = "";
+const originalText =
+  "12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789";
 const fontSize = 14;
 const font = `${fontSize}px sans-serif`;
 
@@ -29,6 +32,53 @@ const reset = () => {
   direction = [0, 0];
   head = [1, 1];
   body = [];
+
+  const maxLength = rows - head[0] - 1;
+  const textRows: string[][] = [];
+  let textRow: string[] = [];
+  let currLength = 0;
+  const textSplit = originalText.split(" ");
+  for (const word of textSplit) {
+    const spaces = textRow.length;
+    if (currLength + spaces + word.length >= maxLength) {
+      textRows.push(textRow);
+      textRow = [word];
+      currLength = word.length;
+    } else {
+      textRow.push(word);
+      currLength += word.length;
+    }
+  }
+  textRows.push(textRow);
+
+  const joinedRows = textRows.map((textRow) => textRow.join(" "));
+
+  const paddedRows = joinedRows.map((joinedRow) =>
+    joinedRow.length === maxLength
+      ? joinedRow
+      : joinedRow + " ".repeat(maxLength - joinedRow.length)
+  );
+
+  const reversedRows = paddedRows.map((paddedRow, index) =>
+    index % 2 === 0 ? paddedRow : paddedRow.split("").reverse().join("")
+  );
+
+  text = reversedRows.join("");
+
+  let currentHeight = head[1];
+  let isGoingRight = true;
+  body.push([head[0] + 1, currentHeight]);
+  for (let i = 1; i < text.length; ++i) {
+    const index = i % maxLength;
+    if (index === 0) {
+      ++currentHeight;
+      isGoingRight = !isGoingRight;
+    }
+
+    const x = isGoingRight ? head[0] + 1 + index : head[0] + maxLength - index;
+    body.push([x, currentHeight]);
+  }
+
   shouldAddFood = false;
   food = getFoodPosition();
 };
@@ -86,6 +136,10 @@ const updateSnake = (time: number) => {
 };
 
 const updateBody = () => {
+  if (direction[0] === 0 && direction[1] === 0) {
+    return;
+  }
+
   if (shouldAddFood) {
     body.push([-1, -1]);
     shouldAddFood = false;
