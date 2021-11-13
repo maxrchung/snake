@@ -1,6 +1,6 @@
-// TODO: Reduce body when eating food
+// TODO: Increase speed
+// TODO: Add timer when death
 // TODO: States
-// TODO: Text
 // TODO: End game shake
 
 const width = 800;
@@ -26,7 +26,6 @@ let direction: number[];
 let head: number[];
 let body: number[][];
 let food: number[];
-let shouldAddFood: boolean;
 
 const reset = () => {
   direction = [0, 0];
@@ -79,7 +78,6 @@ const reset = () => {
     body.push([x, currentHeight]);
   }
 
-  shouldAddFood = false;
   food = getFoodPosition();
 };
 
@@ -140,11 +138,6 @@ const updateBody = () => {
     return;
   }
 
-  if (shouldAddFood) {
-    body.push([-1, -1]);
-    shouldAddFood = false;
-  }
-
   for (let i = body.length - 1; i >= 0; --i) {
     if (i === 0) {
       body[0][0] = head[0];
@@ -178,7 +171,7 @@ const updateFood = () => {
   if (head[0] !== food[0] || head[1] !== food[1]) {
     return;
   }
-  shouldAddFood = true;
+  body.pop();
   const newFood = getFoodPosition();
   food = newFood;
 };
@@ -201,7 +194,8 @@ const drawGrid = () => {
 const drawHead = () =>
   context.fillRect(head[0] * rowWidth, head[1] * rowWidth, rowWidth, rowWidth);
 
-const drawBody = () =>
+const drawBody = () => {
+  const textIndex = text.length - body.length;
   body.map((food, index) => {
     context.strokeRect(
       food[0] * rowWidth,
@@ -210,7 +204,7 @@ const drawBody = () =>
       rowWidth
     );
     if (index < text.length) {
-      const character = text[index];
+      const character = text[textIndex + index];
       const measure = context.measureText(character);
       context.fillText(
         character,
@@ -219,6 +213,7 @@ const drawBody = () =>
       );
     }
   });
+};
 
 const drawFood = () =>
   context.fillRect(
