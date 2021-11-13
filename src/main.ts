@@ -7,7 +7,7 @@ const width = 800;
 const lightGray = "rgb(200, 200, 200)";
 const rows = 40;
 const rowWidth = width / rows;
-const moveTime = 100;
+const moveTime = 75;
 let previousMoveTime = 0;
 
 let text = "";
