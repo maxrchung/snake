@@ -1,18 +1,24 @@
-// TODO: Increase speed
-// TODO: Add timer when death
-// TODO: States
-// TODO: End game shake
+// TODO:
+// Handle death text
+// Add timer when death
+// States
+// Blow up tail
+// Screen shake
+// Deploy
 
-const width = 800;
+import sample from "lodash-es/sample";
+import { deathTexts, startText } from "./text";
+
+const width = 900;
 const lightGray = "rgb(200, 200, 200)";
-const rows = 40;
+const rows = 27;
 const rowWidth = width / rows;
 const moveTime = 75;
 let previousMoveTime = 0;
 
 let text = "";
-const originalText =
-  "12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789 12345789";
+let isStartText = true;
+
 const fontSize = 14;
 const font = `${fontSize}px sans-serif`;
 
@@ -27,6 +33,8 @@ let head: number[];
 let body: number[][];
 let food: number[];
 
+const getDeathText = () => (sample(deathTexts) || "") + " " + startText;
+
 const reset = () => {
   direction = [0, 0];
   head = [1, 1];
@@ -36,7 +44,14 @@ const reset = () => {
   const textRows: string[][] = [];
   let textRow: string[] = [];
   let currLength = 0;
-  const textSplit = originalText.split(" ");
+
+  let textToSplit = startText;
+  if (isStartText) {
+    textToSplit = getDeathText();
+    isStartText = false;
+  }
+
+  const textSplit = textToSplit.split(" ");
   for (const word of textSplit) {
     const spaces = textRow.length;
     if (currLength + spaces + word.length >= maxLength) {
