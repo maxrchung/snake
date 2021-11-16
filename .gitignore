@@ -1,3 +1,5 @@
+src/text*
+
 # Ignore compiled Typescript files
 src/**/*.js.map
 src/**/*.js
