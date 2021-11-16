@@ -6,8 +6,7 @@
 // Screen shake
 // Deploy
 
-import sample from "lodash-es/sample";
-import { deathTexts, startText } from "./text";
+import { startText } from "./text";
 
 const width = 900;
 const lightGray = "rgb(200, 200, 200)";
@@ -17,7 +16,6 @@ const moveTime = 75;
 let previousMoveTime = 0;
 
 let text = "";
-let isStartText = true;
 
 const fontSize = 14;
 const font = `${fontSize}px sans-serif`;
@@ -33,8 +31,6 @@ let head: number[];
 let body: number[][];
 let food: number[];
 
-const getDeathText = () => (sample(deathTexts) || "") + " " + startText;
-
 const reset = () => {
   direction = [0, 0];
   head = [1, 1];
@@ -45,13 +41,7 @@ const reset = () => {
   let textRow: string[] = [];
   let currLength = 0;
 
-  let textToSplit = startText;
-  if (isStartText) {
-    textToSplit = getDeathText();
-    isStartText = false;
-  }
-
-  const textSplit = textToSplit.split(" ");
+  const textSplit = startText.split(" ");
   for (const word of textSplit) {
     const spaces = textRow.length;
     if (currLength + spaces + word.length >= maxLength) {
