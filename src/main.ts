@@ -13,12 +13,9 @@ import { Game } from "./game";
 
 const game = new Game();
 
-document.addEventListener("keydown", game.state.onKeyDown);
-
-const gameLoop = (time: DOMHighResTimeStamp) => {
-  game.context.clearRect(0, 0, Constants.width, Constants.width);
-  game.state.run(time);
-  window.requestAnimationFrame(gameLoop);
+const run = (time: DOMHighResTimeStamp) => {
+  game.run(time);
+  window.requestAnimationFrame(run);
 };
 
-window.requestAnimationFrame(gameLoop);
+window.requestAnimationFrame(run);

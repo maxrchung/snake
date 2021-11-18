@@ -4,6 +4,15 @@ import { Game } from "../game";
 export class State {
   game: Game;
 
+  previousMoveTime = 0;
+
+  text = "";
+
+  direction: number[] = [];
+  head: number[] = [];
+  body: number[][] = [];
+  food: number[] = [];
+
   constructor(game: Game) {
     this.game = game;
   }
@@ -13,7 +22,7 @@ export class State {
   run = (time: DOMHighResTimeStamp) => {};
 
   setTextBody = (text: string) => {
-    const maxLength = Constants.rows - this.game.head[0] - 1;
+    const maxLength = Constants.rows - this.head[0] - 1;
     const textRows: string[][] = [];
     let textRow: string[] = [];
     let currLength = 0;
@@ -44,12 +53,12 @@ export class State {
       index % 2 === 0 ? paddedRow : paddedRow.split("").reverse().join("")
     );
 
-    this.game.text = reversedRows.join("");
+    this.text = reversedRows.join("");
 
-    let currentHeight = this.game.head[1];
+    let currentHeight = this.head[1];
     let isGoingRight = true;
-    this.game.body.push([this.game.head[0] + 1, currentHeight]);
-    for (let i = 1; i < this.game.text.length; ++i) {
+    this.body = [[this.head[0] + 1, currentHeight]];
+    for (let i = 1; i < this.text.length; ++i) {
       const index = i % maxLength;
       if (index === 0) {
         ++currentHeight;
@@ -57,9 +66,9 @@ export class State {
       }
 
       const x = isGoingRight
-        ? this.game.head[0] + 1 + index
-        : this.game.head[0] + maxLength - index;
-      this.game.body.push([x, currentHeight]);
+        ? this.head[0] + 1 + index
+        : this.head[0] + maxLength - index;
+      this.body.push([x, currentHeight]);
     }
   };
 
@@ -80,20 +89,18 @@ export class State {
   };
 
   drawBody = () => {
-    const { context, text, body } = this.game;
-
-    const textIndex = text.length - body.length;
-    body.map((food, index) => {
-      context.strokeRect(
+    const textIndex = this.text.length - this.body.length;
+    this.body.map((food, index) => {
+      this.game.context.strokeRect(
         food[0] * Constants.rowWidth,
         food[1] * Constants.rowWidth,
         Constants.rowWidth,
         Constants.rowWidth
       );
-      if (index < text.length) {
-        const character = text[textIndex + index];
-        const measure = context.measureText(character);
-        context.fillText(
+      if (index < this.text.length) {
+        const character = this.text[textIndex + index];
+        const measure = this.game.context.measureText(character);
+        this.game.context.fillText(
           character,
           food[0] * Constants.rowWidth +
             Constants.rowWidth / 2 -
