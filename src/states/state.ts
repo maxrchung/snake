@@ -1,3 +1,4 @@
+import * as Constants from "../constants";
 import { Game } from "../game";
 
 export class State {
@@ -12,7 +13,7 @@ export class State {
   run = (time: DOMHighResTimeStamp) => {};
 
   setTextBody = (text: string) => {
-    const maxLength = this.game.rows - this.game.head[0] - 1;
+    const maxLength = Constants.rows - this.game.head[0] - 1;
     const textRows: string[][] = [];
     let textRow: string[] = [];
     let currLength = 0;
@@ -63,39 +64,43 @@ export class State {
   };
 
   drawGrid = () => {
-    const { context, width, rowWidth, lightGray } = this.game;
+    const { context } = this.game;
     context.beginPath();
-    for (let i = 0; i <= width; i += rowWidth) {
+    for (let i = 0; i <= Constants.width; i += Constants.rowWidth) {
       context.moveTo(i, 0);
-      context.lineTo(i, width);
+      context.lineTo(i, Constants.width);
       context.moveTo(0, i);
-      context.lineTo(width, i);
+      context.lineTo(Constants.width, i);
     }
     context.closePath();
     context.save();
-    context.strokeStyle = lightGray;
+    context.strokeStyle = Constants.lightGray;
     context.stroke();
     context.restore();
   };
 
   drawBody = () => {
-    const { context, text, body, rowWidth, fontSize } = this.game;
+    const { context, text, body } = this.game;
 
     const textIndex = text.length - body.length;
     body.map((food, index) => {
       context.strokeRect(
-        food[0] * rowWidth,
-        food[1] * rowWidth,
-        rowWidth,
-        rowWidth
+        food[0] * Constants.rowWidth,
+        food[1] * Constants.rowWidth,
+        Constants.rowWidth,
+        Constants.rowWidth
       );
       if (index < text.length) {
         const character = text[textIndex + index];
         const measure = context.measureText(character);
         context.fillText(
           character,
-          food[0] * rowWidth + rowWidth / 2 - measure.width / 2,
-          food[1] * rowWidth + rowWidth / 2 + fontSize / 2
+          food[0] * Constants.rowWidth +
+            Constants.rowWidth / 2 -
+            measure.width / 2,
+          food[1] * Constants.rowWidth +
+            Constants.rowWidth / 2 +
+            Constants.fontSize / 2
         );
       }
     });

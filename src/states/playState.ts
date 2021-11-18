@@ -2,6 +2,7 @@ import { Game } from "../game";
 import { startText } from "../text";
 import { State } from "./state";
 import { EndState } from "./endState";
+import * as Constants from "../constants";
 
 export class PlayState extends State {
   constructor(game: Game) {
@@ -60,22 +61,27 @@ export class PlayState extends State {
   };
 
   getRandomPosition = () => [
-    Math.floor(Math.random() * this.game.rows),
-    Math.floor(Math.random() * this.game.rows),
+    Math.floor(Math.random() * Constants.rows),
+    Math.floor(Math.random() * Constants.rows),
   ];
 
   isExistingPosition = (position: number[]) => {
-    const { food, head, body } = this.game;
-
-    if (food && position[0] === food[0] && position[1] === food[1]) {
+    if (
+      this.game.food &&
+      position[0] === this.game.food[0] &&
+      position[1] === this.game.food[1]
+    ) {
       return true;
     }
 
-    if (position[0] === head[0] && position[1] === head[1]) {
+    if (
+      position[0] === this.game.head[0] &&
+      position[1] === this.game.head[1]
+    ) {
       return true;
     }
 
-    for (const bodyPart of body) {
+    for (const bodyPart of this.game.body) {
       if (position[0] === bodyPart[0] && position[1] === bodyPart[1]) {
         return true;
       }
@@ -85,7 +91,7 @@ export class PlayState extends State {
   };
 
   updateSnake = (time: number) => {
-    if (time - this.game.previousMoveTime <= this.game.moveTime) {
+    if (time - this.game.previousMoveTime <= Constants.moveTime) {
       return;
     }
 
@@ -116,9 +122,9 @@ export class PlayState extends State {
     this.game.head[1] += this.game.direction[1];
 
     if (
-      this.game.head[0] >= this.game.rows ||
+      this.game.head[0] >= Constants.rows ||
       this.game.head[0] < 0 ||
-      this.game.head[1] >= this.game.rows ||
+      this.game.head[1] >= Constants.rows ||
       this.game.head[1] < 0
     ) {
       this.reset();
@@ -155,26 +161,21 @@ export class PlayState extends State {
     this.game.food = newFood;
   };
 
-  drawHead = () => {
-    const { context, head, rowWidth } = this.game;
-    context.fillRect(
-      head[0] * rowWidth,
-      head[1] * rowWidth,
-      rowWidth,
-      rowWidth
+  drawHead = () =>
+    this.game.context.fillRect(
+      this.game.head[0] * Constants.rowWidth,
+      this.game.head[1] * Constants.rowWidth,
+      Constants.rowWidth,
+      Constants.rowWidth
     );
-  };
 
-  drawFood = () => {
-    const { context, food, rowWidth } = this.game;
-
-    context.fillRect(
-      food[0] * rowWidth + rowWidth * 0.25,
-      food[1] * rowWidth + rowWidth * 0.25,
-      rowWidth * 0.5,
-      rowWidth * 0.5
+  drawFood = () =>
+    this.game.context.fillRect(
+      this.game.food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
+      this.game.food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
+      Constants.rowWidth * 0.5,
+      Constants.rowWidth * 0.5
     );
-  };
 
   run = (time: DOMHighResTimeStamp) => {
     this.updateSnake(time);
