@@ -11,17 +11,16 @@ export class PlayState extends State {
   }
 
   setDirection = (x: number, y: number) => {
-    if (this.body.length !== 0) {
-      const nextPosition = [this.head[0] + x, this.head[1] + y];
-      if (
-        nextPosition[0] === this.body[0][0] &&
-        nextPosition[1] === this.body[0][1]
-      ) {
+    const { body, head } = this.game;
+
+    if (body.length !== 0) {
+      const nextPosition = [head[0] + x, head[1] + y];
+      if (nextPosition[0] === body[0][0] && nextPosition[1] === body[0][1]) {
         return;
       }
     }
 
-    this.direction = [x, y];
+    this.game.direction = [x, y];
   };
 
   onKeyDown = (e: KeyboardEvent) => {
@@ -46,10 +45,11 @@ export class PlayState extends State {
   };
 
   reset = () => {
-    this.direction = [0, 0];
-    this.head = [1, 1];
+    this.game.direction = [0, 0];
+    this.game.head = [1, 1];
+    this.game.body = [];
     this.setTextBody(startText);
-    this.food = this.getFoodPosition();
+    this.game.food = this.getFoodPosition();
   };
 
   getFoodPosition = () => {
@@ -67,18 +67,21 @@ export class PlayState extends State {
 
   isExistingPosition = (position: number[]) => {
     if (
-      this.food &&
-      position[0] === this.food[0] &&
-      position[1] === this.food[1]
+      this.game.food &&
+      position[0] === this.game.food[0] &&
+      position[1] === this.game.food[1]
     ) {
       return true;
     }
 
-    if (position[0] === this.head[0] && position[1] === this.head[1]) {
+    if (
+      position[0] === this.game.head[0] &&
+      position[1] === this.game.head[1]
+    ) {
       return true;
     }
 
-    for (const bodyPart of this.body) {
+    for (const bodyPart of this.game.body) {
       if (position[0] === bodyPart[0] && position[1] === bodyPart[1]) {
         return true;
       }
@@ -88,48 +91,51 @@ export class PlayState extends State {
   };
 
   updateSnake = (time: number) => {
-    if (time - this.previousMoveTime <= Constants.moveTime) {
+    if (time - this.game.previousMoveTime <= Constants.moveTime) {
       return;
     }
 
     this.updateBody();
     this.updateHead();
-    this.previousMoveTime = time;
+    this.game.previousMoveTime = time;
   };
 
   updateBody = () => {
-    if (this.direction[0] === 0 && this.direction[1] === 0) {
+    if (this.game.direction[0] === 0 && this.game.direction[1] === 0) {
       return;
     }
 
-    for (let i = this.body.length - 1; i >= 0; --i) {
+    for (let i = this.game.body.length - 1; i >= 0; --i) {
       if (i === 0) {
-        this.body[0][0] = this.head[0];
-        this.body[0][1] = this.head[1];
+        this.game.body[0][0] = this.game.head[0];
+        this.game.body[0][1] = this.game.head[1];
         break;
       }
 
-      this.body[i][0] = this.body[i - 1][0];
-      this.body[i][1] = this.body[i - 1][1];
+      this.game.body[i][0] = this.game.body[i - 1][0];
+      this.game.body[i][1] = this.game.body[i - 1][1];
     }
   };
 
   updateHead = () => {
-    this.head[0] += this.direction[0];
-    this.head[1] += this.direction[1];
+    this.game.head[0] += this.game.direction[0];
+    this.game.head[1] += this.game.direction[1];
 
     if (
-      this.head[0] >= Constants.rows ||
-      this.head[0] < 0 ||
-      this.head[1] >= Constants.rows ||
-      this.head[1] < 0
+      this.game.head[0] >= Constants.rows ||
+      this.game.head[0] < 0 ||
+      this.game.head[1] >= Constants.rows ||
+      this.game.head[1] < 0
     ) {
       this.reset();
       return;
     }
 
-    for (const bodyPart of this.body) {
-      if (this.head[0] === bodyPart[0] && this.head[1] === bodyPart[1]) {
+    for (const bodyPart of this.game.body) {
+      if (
+        this.game.head[0] === bodyPart[0] &&
+        this.game.head[1] === bodyPart[1]
+      ) {
         this.reset();
         return;
       }
@@ -137,33 +143,36 @@ export class PlayState extends State {
   };
 
   updateFood = () => {
-    if (this.head[0] !== this.food[0] || this.head[1] !== this.food[1]) {
+    if (
+      this.game.head[0] !== this.game.food[0] ||
+      this.game.head[1] !== this.game.food[1]
+    ) {
       return;
     }
 
-    this.body.pop();
+    this.game.body.pop();
 
-    if (this.body.length == 0) {
+    if (this.game.body.length == 0) {
       this.game.state = new EndState(this.game);
       return;
     }
 
     const newFood = this.getFoodPosition();
-    this.food = newFood;
+    this.game.food = newFood;
   };
 
   drawHead = () =>
     this.game.context.fillRect(
-      this.head[0] * Constants.rowWidth,
-      this.head[1] * Constants.rowWidth,
+      this.game.head[0] * Constants.rowWidth,
+      this.game.head[1] * Constants.rowWidth,
       Constants.rowWidth,
       Constants.rowWidth
     );
 
   drawFood = () =>
     this.game.context.fillRect(
-      this.food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
-      this.food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
+      this.game.food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
+      this.game.food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
       Constants.rowWidth * 0.5,
       Constants.rowWidth * 0.5
     );

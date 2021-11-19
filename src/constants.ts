@@ -1,5 +1,5 @@
 export const width = 900;
-export const rows = 25;
+export const rows = 27;
 export const rowWidth = width / rows;
 
 export const lightGray = "rgb(200, 200, 200)";
