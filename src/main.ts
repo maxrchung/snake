@@ -1,5 +1,4 @@
 // TODO:
-// Handle win
 // Balance game?
 // Deploy
 // Add some eyes

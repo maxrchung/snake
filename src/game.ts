@@ -3,6 +3,7 @@ import { PlayState } from "./states/playState";
 import { State } from "./states/state";
 
 export class Game {
+  // These values need to be here so that they are tracked between states
   previousMoveTime = 0;
 
   text = "";

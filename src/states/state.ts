@@ -21,7 +21,7 @@ export class State {
     const textSplit = text.split(" ");
     for (const word of textSplit) {
       const spaces = textRow.length;
-      if (currLength + spaces + word.length >= maxLength) {
+      if (currLength + spaces + word.length > maxLength) {
         textRows.push(textRow);
         textRow = [word];
         currLength = word.length;
