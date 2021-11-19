@@ -48,7 +48,7 @@ export class State {
 
     let currentHeight = this.game.head[1];
     let isGoingRight = true;
-    this.game.body.push([this.game.head[0] + 1, currentHeight]);
+    this.game.bodies.push([this.game.head[0] + 1, currentHeight]);
     for (let i = 1; i < this.game.text.length; ++i) {
       const index = i % maxLength;
       if (index === 0) {
@@ -59,7 +59,7 @@ export class State {
       const x = isGoingRight
         ? this.game.head[0] + 1 + index
         : this.game.head[0] + maxLength - index;
-      this.game.body.push([x, currentHeight]);
+      this.game.bodies.push([x, currentHeight]);
     }
   };
 
@@ -80,7 +80,7 @@ export class State {
   };
 
   drawBody = () => {
-    const { context, text, body } = this.game;
+    const { context, text, bodies: body } = this.game;
 
     const textIndex = text.length - body.length;
     body.map((food, index) => {

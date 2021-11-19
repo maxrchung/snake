@@ -5,6 +5,8 @@ import { State } from "./state";
 export class EndState extends State {
   constructor(game: Game) {
     super(game);
+    this.game.head = [-1, 0];
+    this.game.foods = [];
     this.setTextBody(endText);
   }
 

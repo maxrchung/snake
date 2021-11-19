@@ -3,6 +3,7 @@ import { startText } from "../text";
 import { State } from "./state";
 import { EndState } from "./endState";
 import * as Constants from "../constants";
+import times from "lodash-es/times";
 
 export class PlayState extends State {
   constructor(game: Game) {
@@ -11,7 +12,7 @@ export class PlayState extends State {
   }
 
   setDirection = (x: number, y: number) => {
-    const { body, head } = this.game;
+    const { bodies: body, head } = this.game;
 
     if (body.length !== 0) {
       const nextPosition = [head[0] + x, head[1] + y];
@@ -46,10 +47,11 @@ export class PlayState extends State {
 
   reset = () => {
     this.game.direction = [0, 0];
-    this.game.head = [1, 1];
-    this.game.body = [];
+    this.game.head = [0, 0];
+    this.game.bodies = [];
     this.setTextBody(startText);
-    this.game.food = this.getFoodPosition();
+    this.game.foods = [];
+    times(20, () => this.game.foods.push(this.getFoodPosition()));
   };
 
   getFoodPosition = () => {
@@ -66,11 +68,10 @@ export class PlayState extends State {
   ];
 
   isExistingPosition = (position: number[]) => {
-    if (
-      this.game.food &&
-      position[0] === this.game.food[0] &&
-      position[1] === this.game.food[1]
-    ) {
+    const isFoodPosition = this.game.foods.find(
+      (element) => element[0] === position[0] && element[1] === position[1]
+    );
+    if (isFoodPosition) {
       return true;
     }
 
@@ -81,8 +82,8 @@ export class PlayState extends State {
       return true;
     }
 
-    for (const bodyPart of this.game.body) {
-      if (position[0] === bodyPart[0] && position[1] === bodyPart[1]) {
+    for (const body of this.game.bodies) {
+      if (position[0] === body[0] && position[1] === body[1]) {
         return true;
       }
     }
@@ -105,15 +106,15 @@ export class PlayState extends State {
       return;
     }
 
-    for (let i = this.game.body.length - 1; i >= 0; --i) {
+    for (let i = this.game.bodies.length - 1; i >= 0; --i) {
       if (i === 0) {
-        this.game.body[0][0] = this.game.head[0];
-        this.game.body[0][1] = this.game.head[1];
+        this.game.bodies[0][0] = this.game.head[0];
+        this.game.bodies[0][1] = this.game.head[1];
         break;
       }
 
-      this.game.body[i][0] = this.game.body[i - 1][0];
-      this.game.body[i][1] = this.game.body[i - 1][1];
+      this.game.bodies[i][0] = this.game.bodies[i - 1][0];
+      this.game.bodies[i][1] = this.game.bodies[i - 1][1];
     }
   };
 
@@ -121,21 +122,20 @@ export class PlayState extends State {
     this.game.head[0] += this.game.direction[0];
     this.game.head[1] += this.game.direction[1];
 
-    if (
-      this.game.head[0] >= Constants.rows ||
-      this.game.head[0] < 0 ||
-      this.game.head[1] >= Constants.rows ||
-      this.game.head[1] < 0
-    ) {
-      this.reset();
-      return;
+    if (this.game.head[0] >= Constants.rows) {
+      this.game.head[0] = 0;
+    } else if (this.game.head[0] < 0) {
+      this.game.head[0] = Constants.rows - 1;
     }
 
-    for (const bodyPart of this.game.body) {
-      if (
-        this.game.head[0] === bodyPart[0] &&
-        this.game.head[1] === bodyPart[1]
-      ) {
+    if (this.game.head[1] >= Constants.rows) {
+      this.game.head[1] = 0;
+    } else if (this.game.head[1] < 0) {
+      this.game.head[1] = Constants.rows - 1;
+    }
+
+    for (const body of this.game.bodies) {
+      if (this.game.head[0] === body[0] && this.game.head[1] === body[1]) {
         this.reset();
         return;
       }
@@ -143,22 +143,27 @@ export class PlayState extends State {
   };
 
   updateFood = () => {
-    if (
-      this.game.head[0] !== this.game.food[0] ||
-      this.game.head[1] !== this.game.food[1]
-    ) {
+    for (let food of this.game.foods) {
+      if (this.game.head[0] !== food[0] || this.game.head[1] !== food[1]) {
+        continue;
+      }
+
+      this.game.bodies.pop();
+
+      if (this.game.bodies.length == 0) {
+        this.game.state = new EndState(this.game);
+        return;
+      }
+
+      const newFoods = this.game.foods.filter(
+        (element) => element[0] !== food[0] || element[1] !== food[1]
+      );
+      const newFood = this.getFoodPosition();
+      newFoods.push(newFood);
+      this.game.foods = newFoods;
+
       return;
     }
-
-    this.game.body.pop();
-
-    if (this.game.body.length == 0) {
-      this.game.state = new EndState(this.game);
-      return;
-    }
-
-    const newFood = this.getFoodPosition();
-    this.game.food = newFood;
   };
 
   drawHead = () =>
@@ -170,11 +175,13 @@ export class PlayState extends State {
     );
 
   drawFood = () =>
-    this.game.context.fillRect(
-      this.game.food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
-      this.game.food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
-      Constants.rowWidth * 0.5,
-      Constants.rowWidth * 0.5
+    this.game.foods.forEach((food) =>
+      this.game.context.fillRect(
+        food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
+        food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
+        Constants.rowWidth * 0.5,
+        Constants.rowWidth * 0.5
+      )
     );
 
   run = (time: DOMHighResTimeStamp) => {

@@ -1,10 +1,13 @@
 // TODO:
-// Balance game?
 // Deploy
+
+// Balance game some more?
+
+// Flair:
 // Add some eyes
-// Add timer when death
-// States
-// Blow up tail
+// X_X eyes for death
+// Add transition when death
+// Some way to indicate length is lowering
 // Screen shake
 
 import * as Constants from "./constants";
