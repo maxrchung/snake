@@ -1,5 +1,4 @@
 import { Game } from "../game";
-import { startText } from "../text";
 import { State } from "./state";
 import { EndState } from "./endState";
 import * as Constants from "../constants";
@@ -49,9 +48,9 @@ export class PlayState extends State {
     this.game.direction = [0, 0];
     this.game.head = [0, 0];
     this.game.bodies = [];
-    this.setTextBody(startText);
+    this.game.setTextBody(Constants.startText);
     this.game.foods = [];
-    times(20, () => this.game.foods.push(this.getFoodPosition()));
+    times(10, () => this.game.foods.push(this.getFoodPosition()));
   };
 
   getFoodPosition = () => {
@@ -143,7 +142,7 @@ export class PlayState extends State {
   };
 
   updateFood = () => {
-    for (let food of this.game.foods) {
+    for (const food of this.game.foods) {
       if (this.game.head[0] !== food[0] || this.game.head[1] !== food[1]) {
         continue;
       }
@@ -187,9 +186,9 @@ export class PlayState extends State {
   run = (time: DOMHighResTimeStamp) => {
     this.updateSnake(time);
     this.updateFood();
-    this.drawGrid();
+    this.game.drawGrid();
     this.drawHead();
-    this.drawBody();
+    this.game.drawBody();
     this.drawFood();
   };
 }
