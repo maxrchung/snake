@@ -1,9 +1,3 @@
-// TODO:
-// Text comes from environment variable
-// Deploy
-
-// Balance game some more?
-
 // Flair:
 // Add some eyes
 // X_X eyes for death
