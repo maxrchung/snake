@@ -94,7 +94,7 @@ export class Game implements IState {
     }
     context.closePath();
     context.save();
-    context.strokeStyle = Constants.lightGray;
+    context.strokeStyle = Constants.gridColor;
     context.stroke();
     context.restore();
   };

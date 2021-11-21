@@ -173,6 +173,47 @@ export class PlayState extends State {
       Constants.rowWidth
     );
 
+  drawEyes = () => {
+    const { context, head, direction } = this.game;
+    const { rowWidth, eyeWidth, eyeColor } = Constants;
+
+    context.save();
+    context.fillStyle = eyeColor;
+
+    context.translate(
+      head[0] * rowWidth + rowWidth / 2,
+      head[1] * rowWidth + rowWidth / 2
+    );
+
+    if (
+      (direction[0] === 0 && direction[1] === 0) ||
+      (direction[0] === 0 && direction[1] === 1)
+    ) {
+      context.rotate(0);
+    } else if (direction[0] === -1 && direction[1] === 0) {
+      context.rotate(Math.PI / 2);
+    } else if (direction[0] === 0 && direction[1] === -1) {
+      context.rotate(Math.PI);
+    } else if (direction[0] === 1 && direction[1] === 0) {
+      context.rotate(-Math.PI / 2);
+    }
+
+    context.fillRect(
+      -rowWidth / 4 - eyeWidth / 2,
+      rowWidth / 4 - eyeWidth / 2,
+      eyeWidth,
+      eyeWidth
+    );
+    context.fillRect(
+      rowWidth / 4 - eyeWidth / 2,
+      rowWidth / 4 - eyeWidth / 2,
+      eyeWidth,
+      eyeWidth
+    );
+
+    context.restore();
+  };
+
   drawFood = () =>
     this.game.foods.forEach((food) =>
       this.game.context.fillRect(
@@ -188,6 +229,7 @@ export class PlayState extends State {
     this.updateFood();
     this.game.drawGrid();
     this.drawHead();
+    this.drawEyes();
     this.game.drawBody();
     this.drawFood();
   };
