@@ -10,7 +10,7 @@ export class EndState extends State {
     this.game.setTextBody(Constants.startText);
   }
 
-  run = (time: DOMHighResTimeStamp) => {
+  run = () => {
     this.game.drawGrid();
     this.game.drawBody();
   };

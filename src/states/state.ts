@@ -1,4 +1,5 @@
-import * as Constants from "../constants";
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Game } from "../game";
 
 export interface IState {
@@ -13,9 +14,7 @@ export abstract class State implements IState {
     this.game = game;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onKeyDown = (e: KeyboardEvent) => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   run = (time: DOMHighResTimeStamp) => {};
 }

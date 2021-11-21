@@ -28,9 +28,9 @@ export class Game implements IState {
     this.state = new PlayState(this);
   }
 
-  onKeyDown = (e: KeyboardEvent) => this.state.onKeyDown;
+  onKeyDown = () => this.state.onKeyDown;
 
-  run = (time: DOMHighResTimeStamp) => this.state.run;
+  run = () => this.state.run;
 
   setTextBody = (text: string) => {
     const maxLength = Constants.rows - this.head[0] - 1;
