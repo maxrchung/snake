@@ -1,6 +1,6 @@
 import { Game } from "../game";
 import { State } from "./state";
-import { EndState } from "./endState";
+import { EndState } from "./end-state";
 import * as Constants from "../constants";
 import times from "lodash-es/times";
 

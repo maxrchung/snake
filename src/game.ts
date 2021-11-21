@@ -1,5 +1,5 @@
 import * as Constants from "./constants";
-import { PlayState } from "./states/playState";
+import { PlayState } from "./states/play-state";
 import { IState, State } from "./states/state";
 
 export class Game implements IState {
