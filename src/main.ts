@@ -1,5 +1,4 @@
 // Flair:
-// Add some eyes
 // X_X eyes for death
 // Add transition when death
 // Some way to indicate length is lowering
