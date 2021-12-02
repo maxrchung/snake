@@ -5,6 +5,7 @@ interface SequencePhase {
 
 interface ProcessPhase {
   startTime: number;
+  endTime: number;
   run: (time: DOMHighResTimeStamp) => void;
 }
 
@@ -27,19 +28,25 @@ export class Sequence {
     sequencePhases.map((sequencePhase) => {
       this.phases.push({
         startTime: phaseTime,
+        endTime: phaseTime + sequencePhase.duration,
         run: sequencePhase.run,
       });
       phaseTime += sequencePhase.duration;
     });
+
+    console.log(sequencePhases);
+    console.log(this.phases);
   }
 
   run = (time: DOMHighResTimeStamp) => {
-    while (
-      !this.isFinished ||
-      time > this.phases[this.currentIndex].startTime
-    ) {
+    if (this.isFinished) {
+      return;
+    }
+
+    while (time > this.phases[this.currentIndex].endTime) {
       if (++this.currentIndex === this.phases.length) {
         this.isFinished = true;
+        return;
       }
     }
 

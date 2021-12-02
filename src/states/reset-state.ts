@@ -10,12 +10,11 @@ export class ResetState extends State {
     super(game);
     const phases = [
       { duration: 1000, run: () => console.log("phase1") },
-      { duration: 2000, run: () => console.log("phase2") },
-      { duration: 3000, run: () => console.log("phase3") },
-      { duration: 4000, run: () => console.log("phase4") },
-      { duration: 5000, run: () => console.log("phase5") },
+      { duration: 1000, run: () => console.log("phase2") },
+      { duration: 1000, run: () => console.log("phase3") },
+      { duration: 1000, run: () => console.log("phase4") },
+      { duration: 1000, run: () => console.log("phase5") },
     ];
-
     this.sequence = new Sequence(currentTime, phases);
   }
 

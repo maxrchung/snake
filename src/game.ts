@@ -1,5 +1,6 @@
 import * as Constants from "./constants";
 import { PlayState } from "./states/play-state";
+import { ResetState } from "./states/reset-state";
 import { IState, State } from "./states/state";
 
 export class Game implements IState {
@@ -25,7 +26,7 @@ export class Game implements IState {
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.context.font = Constants.font;
 
-    this.state = new PlayState(this);
+    this.state = new ResetState(this, 0);
   }
 
   onKeyDown = () => this.state.onKeyDown;
