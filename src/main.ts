@@ -1,11 +1,7 @@
 // Flair:
-// X_X eyes for death
 // Add transition when death
 // Some way to indicate length is lowering
 // Screen shake
-
-console.log(process.env.START_TEXT);
-console.log(process.env.END_TEXT);
 
 import * as Constants from "./constants";
 import { Game } from "./game";
