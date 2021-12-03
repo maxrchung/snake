@@ -11,7 +11,6 @@ export class EndState extends State {
   }
 
   run = () => {
-    this.game.drawGrid();
     this.game.drawBody();
   };
 }

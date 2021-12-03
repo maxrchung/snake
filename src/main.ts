@@ -12,6 +12,7 @@ document.addEventListener("keydown", game.state.onKeyDown);
 
 const run = (time: DOMHighResTimeStamp) => {
   game.context.clearRect(0, 0, Constants.width, Constants.width);
+  game.drawGrid();
   game.state.run(time);
   window.requestAnimationFrame(run);
 };

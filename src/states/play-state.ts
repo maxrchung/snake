@@ -268,7 +268,6 @@ export class PlayState extends State {
   run = (time: DOMHighResTimeStamp) => {
     this.updateSnake(time);
     this.updateFood();
-    this.game.drawGrid();
     this.drawHead();
     this.drawPlayEyes();
     this.game.drawBody();
