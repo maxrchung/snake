@@ -12,7 +12,6 @@ export class ResetState extends State {
     const phases: SequencePhase[] = [
       new FadeOutBack(game, 1000),
       new MoveHead(game, 1000),
-      new Reset(game, 0),
       new FadeInBack(game, 1000),
     ];
     this.sequence = new Sequence(currentTime, phases);
@@ -94,12 +93,14 @@ class MoveHead extends SequencePhase {
   };
 }
 
-class Reset extends SequencePhase {
-  run = () => this.game.resetPlay();
-}
-
 class FadeInBack extends SequencePhase {
+  isReset = false;
+
   run = (elapsed: number) => {
+    if (!this.isReset) {
+      this.isReset = true;
+      this.game.resetPlay();
+    }
     this.game.backOpacity = elapsed;
   };
 }

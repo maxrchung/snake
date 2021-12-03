@@ -44,9 +44,6 @@ export class Sequence {
       });
       phaseTime += sequencePhase.duration;
     });
-
-    console.log(sequencePhases);
-    console.log(this.phases);
   }
 
   run = (time: number) => {
