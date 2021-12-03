@@ -2,7 +2,7 @@ import { Game } from "../game";
 import { State } from "./state";
 import { EndState } from "./end-state";
 import * as Constants from "../constants";
-import { ResetState } from "./reset-state";
+import { ResettingState } from "./resetting-state";
 
 export class PlayState extends State {
   constructor(game: Game) {
@@ -88,7 +88,7 @@ export class PlayState extends State {
 
     for (const body of this.game.bodies) {
       if (this.game.head[0] === body[0] && this.game.head[1] === body[1]) {
-        this.game.state = new ResetState(this.game, time);
+        this.game.state = new ResettingState(this.game, time);
         return;
       }
     }

@@ -4,7 +4,7 @@ import { PlayState } from "./play-state";
 import { Sequence, SequencePhase } from "../sequence";
 import * as Constants from "../constants";
 
-export class ResetState extends State {
+export class ResettingState extends State {
   sequence: Sequence;
 
   constructor(game: Game, currentTime: number) {
