@@ -8,7 +8,7 @@ import { Game } from "./game";
 
 const game = new Game();
 
-document.addEventListener("keydown", game.state.onKeyDown);
+document.addEventListener("keydown", (e) => game.state.onKeyDown(e));
 
 const run = (time: DOMHighResTimeStamp) => {
   game.context.clearRect(0, 0, Constants.width, Constants.width);
