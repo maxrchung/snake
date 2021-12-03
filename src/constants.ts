@@ -14,3 +14,5 @@ export const startText = process.env.START_TEXT || "start";
 export const endText = process.env.END_TEXT || "end";
 
 export const moveTime = 75;
+
+export const sequenceTime = 1000;

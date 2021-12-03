@@ -4,15 +4,15 @@ import { PlayState } from "./play-state";
 import { Sequence, SequencePhase } from "../sequence";
 import * as Constants from "../constants";
 
-export class ResettingState extends State {
+export class ResetState extends State {
   sequence: Sequence;
 
   constructor(game: Game, currentTime: number) {
     super(game);
     const phases: SequencePhase[] = [
-      new FadeOutBack(game, 1000),
-      new MoveHead(game, 1000),
-      new FadeInBack(game, 1000),
+      new FadeOutBack(game, Constants.sequenceTime),
+      new MoveHead(game, Constants.sequenceTime),
+      new FadeInBack(game, Constants.sequenceTime),
     ];
     this.sequence = new Sequence(currentTime, phases);
   }
@@ -67,14 +67,15 @@ export class ResettingState extends State {
 
     this.game.drawBody();
     this.game.drawHead();
-    this.drawXEyes();
     this.game.drawFood();
+    this.drawXEyes();
   };
 }
 
 class FadeOutBack extends SequencePhase {
   run = (elapsed: number) => {
-    this.game.backOpacity = 1 - elapsed;
+    this.game.bodyOpacity = 1 - elapsed;
+    this.game.foodOpacity = 1 - elapsed;
   };
 }
 
@@ -101,6 +102,7 @@ class FadeInBack extends SequencePhase {
       this.isReset = true;
       this.game.resetPlay();
     }
-    this.game.backOpacity = elapsed;
+    this.game.bodyOpacity = elapsed;
+    this.game.foodOpacity = elapsed;
   };
 }

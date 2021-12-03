@@ -1,6 +1,7 @@
 // Flair:
-// Add transition when death
+// Add start phase
 // Some way to indicate length is lowering
+// Make food reset at different timing
 // Screen shake
 
 import * as Constants from "./constants";

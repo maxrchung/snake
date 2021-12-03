@@ -1,8 +1,8 @@
 import { Game } from "../game";
 import { State } from "./state";
-import { EndState } from "./end-state";
 import * as Constants from "../constants";
-import { ResettingState } from "./resetting-state";
+import { ResetState } from "./reset-state";
+import { EndState } from "./end-state";
 
 export class PlayState extends State {
   constructor(game: Game) {
@@ -88,13 +88,13 @@ export class PlayState extends State {
 
     for (const body of this.game.bodies) {
       if (this.game.head[0] === body[0] && this.game.head[1] === body[1]) {
-        this.game.state = new ResettingState(this.game, time);
+        this.game.state = new ResetState(this.game, time);
         return;
       }
     }
   };
 
-  updateFood = () => {
+  updateFood = (time: number) => {
     for (const food of this.game.foods) {
       if (this.game.head[0] !== food[0] || this.game.head[1] !== food[1]) {
         continue;
@@ -103,7 +103,7 @@ export class PlayState extends State {
       this.game.bodies.pop();
 
       if (this.game.bodies.length == 0) {
-        this.game.state = new EndState(this.game);
+        this.game.state = new EndState(this.game, time);
         return;
       }
 
@@ -161,10 +161,10 @@ export class PlayState extends State {
 
   run = (time: number) => {
     this.updateSnake(time);
-    this.updateFood();
+    this.updateFood(time);
     this.game.drawHead();
-    this.drawPlayEyes();
     this.game.drawBody();
     this.game.drawFood();
+    this.drawPlayEyes();
   };
 }

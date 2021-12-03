@@ -13,7 +13,9 @@ export class Game implements IState {
   head: number[] = [];
   bodies: number[][] = [];
   foods: number[][] = [];
-  backOpacity = 1;
+  headOpacity = 1;
+  bodyOpacity = 1;
+  foodOpacity = 1;
 
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
@@ -129,6 +131,13 @@ export class Game implements IState {
     times(10, () => this.foods.push(this.getFoodPosition()));
   };
 
+  resetEnd = () => {
+    this.head = [-1, 0];
+    this.foods = [];
+    this.bodies = [];
+    this.setTextBody(Constants.endText);
+  };
+
   drawGrid = () => {
     const { context } = this;
     context.beginPath();
@@ -145,20 +154,25 @@ export class Game implements IState {
     context.restore();
   };
 
-  drawHead = () =>
-    this.context.fillRect(
+  drawHead = () => {
+    const { context, headOpacity } = this;
+    context.save();
+    context.globalAlpha = headOpacity;
+    context.fillRect(
       this.head[0] * Constants.rowWidth,
       this.head[1] * Constants.rowWidth,
       Constants.rowWidth,
       Constants.rowWidth
     );
+    context.restore();
+  };
 
   drawBody = () => {
     const { context, text, bodies } = this;
     const textIndex = text.length - bodies.length;
 
     context.save();
-    context.globalAlpha = this.backOpacity;
+    context.globalAlpha = this.bodyOpacity;
     bodies.map((food, index) => {
       context.strokeRect(
         food[0] * Constants.rowWidth,
@@ -186,7 +200,7 @@ export class Game implements IState {
   drawFood = () => {
     const { context, foods } = this;
     context.save();
-    context.globalAlpha = this.backOpacity;
+    context.globalAlpha = this.foodOpacity;
     foods.forEach((food) =>
       context.fillRect(
         food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
