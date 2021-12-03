@@ -2,12 +2,11 @@ import { Game } from "../game";
 import { State } from "./state";
 import { EndState } from "./end-state";
 import * as Constants from "../constants";
-import times from "lodash-es/times";
+import { ResetState } from "./reset-state";
 
 export class PlayState extends State {
   constructor(game: Game) {
     super(game);
-    this.reset();
   }
 
   setDirection = (x: number, y: number) => {
@@ -44,59 +43,13 @@ export class PlayState extends State {
     }
   };
 
-  reset = () => {
-    this.game.direction = [0, 0];
-    this.game.head = [0, 0];
-    this.game.bodies = [];
-    this.game.setTextBody(Constants.startText);
-    this.game.foods = [];
-    times(10, () => this.game.foods.push(this.getFoodPosition()));
-  };
-
-  getFoodPosition = () => {
-    let position = this.getRandomPosition();
-    while (this.isExistingPosition(position)) {
-      position = this.getRandomPosition();
-    }
-    return position;
-  };
-
-  getRandomPosition = () => [
-    Math.floor(Math.random() * Constants.rows),
-    Math.floor(Math.random() * Constants.rows),
-  ];
-
-  isExistingPosition = (position: number[]) => {
-    const isFoodPosition = this.game.foods.find(
-      (element) => element[0] === position[0] && element[1] === position[1]
-    );
-    if (isFoodPosition) {
-      return true;
-    }
-
-    if (
-      position[0] === this.game.head[0] &&
-      position[1] === this.game.head[1]
-    ) {
-      return true;
-    }
-
-    for (const body of this.game.bodies) {
-      if (position[0] === body[0] && position[1] === body[1]) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
   updateSnake = (time: number) => {
     if (time - this.game.previousMoveTime <= Constants.moveTime) {
       return;
     }
 
     this.updateBody();
-    this.updateHead();
+    this.updateHead(time);
     this.game.previousMoveTime = time;
   };
 
@@ -117,7 +70,7 @@ export class PlayState extends State {
     }
   };
 
-  updateHead = () => {
+  updateHead = (time: number) => {
     this.game.head[0] += this.game.direction[0];
     this.game.head[1] += this.game.direction[1];
 
@@ -135,7 +88,7 @@ export class PlayState extends State {
 
     for (const body of this.game.bodies) {
       if (this.game.head[0] === body[0] && this.game.head[1] === body[1]) {
-        this.reset();
+        this.game.state = new ResetState(this.game, time);
         return;
       }
     }
@@ -157,21 +110,13 @@ export class PlayState extends State {
       const newFoods = this.game.foods.filter(
         (element) => element[0] !== food[0] || element[1] !== food[1]
       );
-      const newFood = this.getFoodPosition();
+      const newFood = this.game.getFoodPosition();
       newFoods.push(newFood);
       this.game.foods = newFoods;
 
       return;
     }
   };
-
-  drawHead = () =>
-    this.game.context.fillRect(
-      this.game.head[0] * Constants.rowWidth,
-      this.game.head[1] * Constants.rowWidth,
-      Constants.rowWidth,
-      Constants.rowWidth
-    );
 
   drawPlayEyes = () => {
     const { context, head, direction } = this.game;
@@ -214,63 +159,12 @@ export class PlayState extends State {
     context.restore();
   };
 
-  drawXEyes = () => {
-    const { context, head, direction } = this.game;
-    const { rowWidth, eyeColor } = Constants;
-
-    context.save();
-    context.fillStyle = eyeColor;
-
-    context.translate(
-      head[0] * rowWidth + rowWidth / 2,
-      head[1] * rowWidth + rowWidth / 2
-    );
-
-    if (
-      (direction[0] === 0 && direction[1] === 0) ||
-      (direction[0] === 0 && direction[1] === 1)
-    ) {
-      context.rotate(0);
-    } else if (direction[0] === -1 && direction[1] === 0) {
-      context.rotate(Math.PI / 2);
-    } else if (direction[0] === 0 && direction[1] === -1) {
-      context.rotate(Math.PI);
-    } else if (direction[0] === 1 && direction[1] === 0) {
-      context.rotate(-Math.PI / 2);
-    }
-
-    const measure = context.measureText("x");
-    context.fillText(
-      "x",
-      -rowWidth / 4 - measure.width / 2,
-      rowWidth / 4 + measure.width / 2
-    );
-
-    context.fillText(
-      "x",
-      rowWidth / 4 - measure.width / 2,
-      rowWidth / 4 + measure.width / 2
-    );
-
-    context.restore();
-  };
-
-  drawFood = () =>
-    this.game.foods.forEach((food) =>
-      this.game.context.fillRect(
-        food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
-        food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
-        Constants.rowWidth * 0.5,
-        Constants.rowWidth * 0.5
-      )
-    );
-
-  run = (time: DOMHighResTimeStamp) => {
+  run = (time: number) => {
     this.updateSnake(time);
     this.updateFood();
-    this.drawHead();
+    this.game.drawHead();
     this.drawPlayEyes();
     this.game.drawBody();
-    this.drawFood();
+    this.game.drawFood();
   };
 }

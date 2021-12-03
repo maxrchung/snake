@@ -1,6 +1,6 @@
+import times from "lodash-es/times";
 import * as Constants from "./constants";
 import { PlayState } from "./states/play-state";
-import { ResetState } from "./states/reset-state";
 import { IState, State } from "./states/state";
 
 export class Game implements IState {
@@ -13,6 +13,7 @@ export class Game implements IState {
   head: number[] = [];
   bodies: number[][] = [];
   foods: number[][] = [];
+  backOpacity = 1;
 
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
@@ -26,7 +27,8 @@ export class Game implements IState {
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.context.font = Constants.font;
 
-    this.state = new ResetState(this, 0);
+    this.state = new PlayState(this);
+    this.resetPlay();
   }
 
   onKeyDown = () => this.state.onKeyDown;
@@ -84,6 +86,49 @@ export class Game implements IState {
     }
   };
 
+  getRandomPosition = () => [
+    Math.floor(Math.random() * Constants.rows),
+    Math.floor(Math.random() * Constants.rows),
+  ];
+
+  isExistingPosition = (position: number[]) => {
+    const isFoodPosition = this.foods.find(
+      (element) => element[0] === position[0] && element[1] === position[1]
+    );
+    if (isFoodPosition) {
+      return true;
+    }
+
+    if (position[0] === this.head[0] && position[1] === this.head[1]) {
+      return true;
+    }
+
+    for (const body of this.bodies) {
+      if (position[0] === body[0] && position[1] === body[1]) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  getFoodPosition = () => {
+    let position = this.getRandomPosition();
+    while (this.isExistingPosition(position)) {
+      position = this.getRandomPosition();
+    }
+    return position;
+  };
+
+  resetPlay = () => {
+    this.direction = [0, 0];
+    this.head = [0, 0];
+    this.bodies = [];
+    this.setTextBody(Constants.startText);
+    this.foods = [];
+    times(10, () => this.foods.push(this.getFoodPosition()));
+  };
+
   drawGrid = () => {
     const { context } = this;
     context.beginPath();
@@ -100,11 +145,21 @@ export class Game implements IState {
     context.restore();
   };
 
-  drawBody = () => {
-    const { context, text, bodies: body } = this;
+  drawHead = () =>
+    this.context.fillRect(
+      this.head[0] * Constants.rowWidth,
+      this.head[1] * Constants.rowWidth,
+      Constants.rowWidth,
+      Constants.rowWidth
+    );
 
-    const textIndex = text.length - body.length;
-    body.map((food, index) => {
+  drawBody = () => {
+    const { context, text, bodies } = this;
+    const textIndex = text.length - bodies.length;
+
+    context.save();
+    context.globalAlpha = this.backOpacity;
+    bodies.map((food, index) => {
       context.strokeRect(
         food[0] * Constants.rowWidth,
         food[1] * Constants.rowWidth,
@@ -125,5 +180,21 @@ export class Game implements IState {
         );
       }
     });
+    context.restore();
+  };
+
+  drawFood = () => {
+    const { context, foods } = this;
+    context.save();
+    context.globalAlpha = this.backOpacity;
+    foods.forEach((food) =>
+      context.fillRect(
+        food[0] * Constants.rowWidth + Constants.rowWidth * 0.25,
+        food[1] * Constants.rowWidth + Constants.rowWidth * 0.25,
+        Constants.rowWidth * 0.5,
+        Constants.rowWidth * 0.5
+      )
+    );
+    context.restore();
   };
 }
