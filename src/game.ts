@@ -1,5 +1,6 @@
 import times from "lodash-es/times";
 import * as Constants from "./constants";
+import { Sequence } from "./sequence";
 import { StartState } from "./states/start-state";
 import { IState, State } from "./states/state";
 
@@ -13,6 +14,7 @@ export class Game implements IState {
   head: number[] = [];
   bodies: number[][] = [];
   foods: number[][] = [];
+  eatSequences: Sequence[] = [];
   headOpacity = 0;
   bodyOpacity = 0;
   foodOpacity = 0;
@@ -129,6 +131,7 @@ export class Game implements IState {
     this.setTextBody(Constants.startText);
     this.foods = [];
     times(10, () => this.foods.push(this.getFoodPosition()));
+    this.eatSequences = [];
   };
 
   resetEnd = () => {
@@ -169,26 +172,25 @@ export class Game implements IState {
 
   drawBody = () => {
     const { context, text, bodies } = this;
-    const textIndex = text.length - bodies.length;
 
     context.save();
     context.globalAlpha = this.bodyOpacity;
-    bodies.map((food, index) => {
+    bodies.map((body, index) => {
       context.strokeRect(
-        food[0] * Constants.rowWidth,
-        food[1] * Constants.rowWidth,
+        body[0] * Constants.rowWidth,
+        body[1] * Constants.rowWidth,
         Constants.rowWidth,
         Constants.rowWidth
       );
       if (index < text.length) {
-        const character = text[textIndex + index];
+        const character = text[index];
         const measure = context.measureText(character);
         context.fillText(
           character,
-          food[0] * Constants.rowWidth +
+          body[0] * Constants.rowWidth +
             Constants.rowWidth / 2 -
             measure.width / 2,
-          food[1] * Constants.rowWidth +
+          body[1] * Constants.rowWidth +
             Constants.rowWidth / 2 +
             Constants.fontSize / 2
         );
@@ -210,6 +212,12 @@ export class Game implements IState {
       )
     );
     context.restore();
+  };
+
+  drawEatSequences = (time: number) => {
+    for (const sequence of this.eatSequences) {
+      sequence.run(time);
+    }
   };
 
   drawPlayEyes = () => {

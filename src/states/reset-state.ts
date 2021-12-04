@@ -68,6 +68,7 @@ export class ResetState extends State {
     this.game.drawBody();
     this.game.drawHead();
     this.game.drawFood();
+    this.game.drawEatSequences(time);
     this.drawXEyes();
   };
 }

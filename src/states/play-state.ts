@@ -3,6 +3,7 @@ import { State } from "./state";
 import * as Constants from "../constants";
 import { ResetState } from "./reset-state";
 import { EndState } from "./end-state";
+import { Sequence, SequencePhase } from "../sequence";
 
 export class PlayState extends State {
   constructor(game: Game) {
@@ -100,12 +101,26 @@ export class PlayState extends State {
         continue;
       }
 
-      this.game.bodies.pop();
-
-      if (this.game.bodies.length == 0) {
+      if (this.game.bodies.length === 0) {
         this.game.state = new EndState(this.game, time);
         return;
       }
+
+      const lastBody = this.game.bodies[this.game.bodies.length - 1];
+
+      this.game.eatSequences.push(
+        new Sequence(time, [
+          new FadeOutBody(
+            this.game,
+            Constants.sequenceTime,
+            lastBody[0],
+            lastBody[1],
+            this.game.text[this.game.bodies.length - 1]
+          ),
+        ])
+      );
+
+      this.game.bodies.pop();
 
       const newFoods = this.game.foods.filter(
         (element) => element[0] !== food[0] || element[1] !== food[1]
@@ -124,6 +139,50 @@ export class PlayState extends State {
     this.game.drawHead();
     this.game.drawBody();
     this.game.drawFood();
+    this.game.drawEatSequences(time);
     this.game.drawPlayEyes();
+  };
+}
+
+class FadeOutBody extends SequencePhase {
+  x: number;
+  y: number;
+  character: string;
+
+  constructor(
+    game: Game,
+    duration: number,
+    x: number,
+    y: number,
+    character: string
+  ) {
+    super(game, duration);
+    this.x = x;
+    this.y = y;
+    this.character = character;
+  }
+
+  run = (elapsed: number) => {
+    const { context } = this.game;
+    context.save();
+    context.globalAlpha = 1 - elapsed;
+
+    context.strokeRect(
+      this.x * Constants.rowWidth,
+      this.y * Constants.rowWidth,
+      Constants.rowWidth,
+      Constants.rowWidth
+    );
+
+    const measure = context.measureText(this.character);
+    context.fillText(
+      this.character,
+      this.x * Constants.rowWidth + Constants.rowWidth / 2 - measure.width / 2,
+      this.y * Constants.rowWidth +
+        Constants.rowWidth / 2 +
+        Constants.fontSize / 2
+    );
+
+    context.restore();
   };
 }

@@ -51,6 +51,7 @@ export class EndState extends State {
     this.game.drawBody();
     this.game.drawHead();
     this.game.drawFood();
+    this.game.drawEatSequences(time);
     this.drawSmileEyes();
   };
 }
