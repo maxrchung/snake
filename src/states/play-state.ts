@@ -15,6 +15,19 @@ export class PlayState extends State {
 
     if (body.length !== 0) {
       const nextPosition = [head[0] + x, head[1] + y];
+
+      if (nextPosition[0] < 0) {
+        nextPosition[0] = Constants.rows - 1;
+      } else if (nextPosition[0] >= Constants.rows) {
+        nextPosition[0] = 0;
+      }
+
+      if (nextPosition[1] < 0) {
+        nextPosition[1] = Constants.rows - 1;
+      } else if (nextPosition[1] >= Constants.rows) {
+        nextPosition[1] = 0;
+      }
+
       if (nextPosition[0] === body[0][0] && nextPosition[1] === body[0][1]) {
         return;
       }
