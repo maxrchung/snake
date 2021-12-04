@@ -130,7 +130,7 @@ export class Game implements IState {
     this.bodies = [];
     this.setTextBody(Constants.startText);
     this.foods = [];
-    times(10, () => this.foods.push(this.getFoodPosition()));
+    times(5, () => this.foods.push(this.getFoodPosition()));
     this.eatSequences = [];
   };
 
