@@ -118,53 +118,12 @@ export class PlayState extends State {
     }
   };
 
-  drawPlayEyes = () => {
-    const { context, head, direction } = this.game;
-    const { rowWidth, eyeWidth, eyeColor } = Constants;
-
-    context.save();
-    context.fillStyle = eyeColor;
-
-    context.translate(
-      head[0] * rowWidth + rowWidth / 2,
-      head[1] * rowWidth + rowWidth / 2
-    );
-
-    if (
-      (direction[0] === 0 && direction[1] === 0) ||
-      (direction[0] === 0 && direction[1] === 1)
-    ) {
-      context.rotate(0);
-    } else if (direction[0] === -1 && direction[1] === 0) {
-      context.rotate(Math.PI / 2);
-    } else if (direction[0] === 0 && direction[1] === -1) {
-      context.rotate(Math.PI);
-    } else if (direction[0] === 1 && direction[1] === 0) {
-      context.rotate(-Math.PI / 2);
-    }
-
-    context.fillRect(
-      -rowWidth / 4 - eyeWidth / 2,
-      rowWidth / 4 - eyeWidth / 2,
-      eyeWidth,
-      eyeWidth
-    );
-    context.fillRect(
-      rowWidth / 4 - eyeWidth / 2,
-      rowWidth / 4 - eyeWidth / 2,
-      eyeWidth,
-      eyeWidth
-    );
-
-    context.restore();
-  };
-
   run = (time: number) => {
     this.updateSnake(time);
     this.updateFood(time);
     this.game.drawHead();
     this.game.drawBody();
     this.game.drawFood();
-    this.drawPlayEyes();
+    this.game.drawPlayEyes();
   };
 }

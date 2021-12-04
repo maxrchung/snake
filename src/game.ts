@@ -1,6 +1,6 @@
 import times from "lodash-es/times";
 import * as Constants from "./constants";
-import { PlayState } from "./states/play-state";
+import { StartState } from "./states/start-state";
 import { IState, State } from "./states/state";
 
 export class Game implements IState {
@@ -13,9 +13,9 @@ export class Game implements IState {
   head: number[] = [];
   bodies: number[][] = [];
   foods: number[][] = [];
-  headOpacity = 1;
-  bodyOpacity = 1;
-  foodOpacity = 1;
+  headOpacity = 0;
+  bodyOpacity = 0;
+  foodOpacity = 0;
 
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
@@ -29,7 +29,7 @@ export class Game implements IState {
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.context.font = Constants.font;
 
-    this.state = new PlayState(this);
+    this.state = new StartState(this, 0);
     this.resetPlay();
   }
 
@@ -209,6 +209,47 @@ export class Game implements IState {
         Constants.rowWidth * 0.5
       )
     );
+    context.restore();
+  };
+
+  drawPlayEyes = () => {
+    const { context, head, direction } = this;
+    const { rowWidth, eyeWidth, eyeColor } = Constants;
+
+    context.save();
+    context.fillStyle = eyeColor;
+
+    context.translate(
+      head[0] * rowWidth + rowWidth / 2,
+      head[1] * rowWidth + rowWidth / 2
+    );
+
+    if (
+      (direction[0] === 0 && direction[1] === 0) ||
+      (direction[0] === 0 && direction[1] === 1)
+    ) {
+      context.rotate(0);
+    } else if (direction[0] === -1 && direction[1] === 0) {
+      context.rotate(Math.PI / 2);
+    } else if (direction[0] === 0 && direction[1] === -1) {
+      context.rotate(Math.PI);
+    } else if (direction[0] === 1 && direction[1] === 0) {
+      context.rotate(-Math.PI / 2);
+    }
+
+    context.fillRect(
+      -rowWidth / 4 - eyeWidth / 2,
+      rowWidth / 4 - eyeWidth / 2,
+      eyeWidth,
+      eyeWidth
+    );
+    context.fillRect(
+      rowWidth / 4 - eyeWidth / 2,
+      rowWidth / 4 - eyeWidth / 2,
+      eyeWidth,
+      eyeWidth
+    );
+
     context.restore();
   };
 }
