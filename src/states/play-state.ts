@@ -89,15 +89,19 @@ export class PlayState extends State {
     this.game.head[1] += this.game.direction[1];
 
     if (this.game.head[0] >= Constants.rows) {
-      this.game.head[0] = 0;
+      this.game.state = new ResetState(this.game, time);
+      return;
     } else if (this.game.head[0] < 0) {
-      this.game.head[0] = Constants.rows - 1;
+      this.game.state = new ResetState(this.game, time);
+      return;
     }
 
     if (this.game.head[1] >= Constants.rows) {
-      this.game.head[1] = 0;
+      this.game.state = new ResetState(this.game, time);
+      return;
     } else if (this.game.head[1] < 0) {
-      this.game.head[1] = Constants.rows - 1;
+      this.game.state = new ResetState(this.game, time);
+      return;
     }
 
     for (const body of this.game.bodies) {
